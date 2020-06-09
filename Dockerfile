@@ -16,9 +16,6 @@ RUN apk add --update --no-cache \
   tzdata \
   yarn
 
-RUN gem install bundler:2.1.4
-RUN gem install rails --version ">6.0" --no-document
-
 ARG APP_PATH
 RUN mkdir $APP_PATH
 WORKDIR $APP_PATH
