@@ -1,0 +1,45 @@
+version: "3"
+services:
+  db:
+    image: postgres:${POSTGRES_FLAV}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        RUBY_FLAV: ${RUBY_FLAV}
+        APP_PATH: ${APP_PATH}
+        LOCAL_APP_PATH: ${LOCAL_APP_PATH}
+
+    image: ${IMAGE_NAME}
+    command: bin/rails s -p 3000 -b '0.0.0.0'
+
+    environment:
+      RACK_ENV: development
+      RAILS_ENV: development
+      DATABASE_URL: "postgres://${DB_USERNAME}:${DB_PASSWORD}@db/${DB_NAME}"
+
+    env_file:
+      - .env
+
+    volumes:
+      - ${LOCAL_APP_PATH}:${APP_PATH}
+      - ./gems:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+
+    # Allow attaching debugger
+    stdin_open: true
+    tty: true
+
