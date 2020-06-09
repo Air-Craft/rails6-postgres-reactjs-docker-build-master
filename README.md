@@ -157,7 +157,7 @@ group :development do
   gem 'terminal-notifier-guard', :require => false
 end
 
-
+```
 
 ## Thanks
 
